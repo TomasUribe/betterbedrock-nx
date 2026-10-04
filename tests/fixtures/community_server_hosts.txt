@@ -1,0 +1,67 @@
+# Example Atmosphere dns.mitm hosts file in the style a community replacement
+# server writes (Nextendo's Prelude, for one). Written for BedrockLink's tests;
+# every address is a documentation address (RFC 5737). The last matching line wins.
+
+# Nintendo services and game servers -> the community server
+198.51.100.20    *.nintendo.com
+198.51.100.20    *.nintendo.co.jp
+198.51.100.20 accounts.nintendo.com
+198.51.100.20 api.accounts.nintendo.com
+198.51.100.20 m-lp1.baas.nintendo.com
+198.51.100.20 e0d67c509fb203858ebcb2fe3f88c2aa.baas.nintendo.com
+198.51.100.20 cdn-image-e0d67c509fb203858ebcb2fe3f88c2aa.baas.nintendo.com
+198.51.100.20 capi.lp1.op2.nintendo.net
+198.51.100.20 storage.hac.lp1.scsi.srv.nintendo.net
+198.51.100.20 val.hac.penne.srv.nintendo.net
+198.51.100.20 god.hac.lp1.penne.srv.nintendo.net
+198.51.100.20 dauth-lp1.ndas.srv.nintendo.net
+198.51.100.20 aauth.hac.lp1.ndas.srv.nintendo.net
+198.51.100.20    *.srv.nintendo.net
+198.51.100.20    *srv.nintendo.net
+198.51.100.20 g2*.s.n.srv.nintendo.net
+198.51.100.21 g2b309e01-lp1.s.n.srv.nintendo.net
+198.51.100.20 g23380901-lp1.s.n.srv.nintendo.net
+198.51.100.20 g2ee2e300-lp1.s.n.srv.nintendo.net
+198.51.100.20 g26cfaf00-lp1.s.n.srv.nintendo.net
+198.51.100.20 g20de2100-lp1.s.n.srv.nintendo.net
+198.51.100.20 g23932a00-lp1.s.n.srv.nintendo.net
+198.51.100.20 g25c08801-lp1.s.n.srv.nintendo.net
+198.51.100.20 g2df33d01-lp1.s.n.srv.nintendo.net
+198.51.100.20 t-dce9377b-lp1.lp1.t.npln.srv.nintendo.net
+198.51.100.20 t-adf89f68-lp1.lp1.t.npln.srv.nintendo.net
+198.51.100.20 lp1.nso.nintendo.net
+198.51.100.20 t-7b4e32ca-lp1.lp1.t.npln.srv.nintendo.net
+198.51.100.20 api-lp1.znc.srv.nintendo.net
+198.51.100.20 t-4e44e7a0-lp1.lp1.t.npln.srv.nintendo.net
+198.51.100.20 t-50e39f8f-lp1.lp1.t.npln.srv.nintendo.net
+198.51.100.20 v3-lp1.vp.n.srv.nintendo.net
+198.51.100.20 gw.hac.lp1.vermillion.srv.nintendo.net
+198.51.100.20 val.hac.lp1.penne.srv.nintendo.net
+198.51.100.20 fro-3.hac.lp1.penne.srv.nintendo.net
+198.51.100.20 dragons.hac.lp1.dragons.nintendo.net
+198.51.100.20 *.npln.nintendo.net
+198.51.100.20 gamesync.npln.nintendo.net
+198.51.100.20 bcat-list-lp1.cdn.nintendo.net
+198.51.100.20 bcat-data-lp1.cdn.nintendo.net
+198.51.100.20 bcat-topics-lp1.cdn.nintendo.net
+
+# Another game's services, redirected so it gets a stand-in sign-in
+198.51.100.20 83156.playfabapi.com
+198.51.100.20 vex.minecraftservices.com
+198.51.100.20 s2s-vex.minecraftservices.com
+198.51.100.20 xboxlive.com
+198.51.100.20 *.xboxlive.com
+198.51.100.20 login.live.com
+
+# The NAT check needs a second address
+198.51.100.21  nncs2-*.n.n.srv.nintendo.net
+
+# Telemetry -> the community server's sink
+198.51.100.20          receive-%.dg.srv.nintendo.net
+198.51.100.20          receive-%.er.srv.nintendo.net
+
+# System updates are left to the network's DNS on purpose.
+
+# Connection tests
+198.51.100.20 conntest.nintendowifi.net
+198.51.100.20 ctest.cdn.nintendo.net

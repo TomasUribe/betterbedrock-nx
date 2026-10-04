@@ -1,0 +1,23 @@
+# devkitPro build outputs
+build/
+*.elf
+*.nacp
+*.nro
+*.nso
+*.nsp
+*.npdm
+*.ovl
+*.lst
+*.map
+
+# PC test builds
+/build-pc/
+
+# Release packages
+/dist/
+
+# Private: console test runs, logs and notes (they contain personal details)
+/hardware-runs/
+
+# Python caches
+__pycache__/
