@@ -19,6 +19,20 @@ Everything is done with one or two clearly marked lines in Atmosphère's hosts f
 Nintendo's lines are never touched: every change is checked first, backed up, and
 takes effect at once, without a restart.
 
+## Who it's for
+
+Anyone who wants to play Minecraft (Bedrock) online on a Switch that stays off
+Nintendo's servers:
+
+- an **emuMMC with Nintendo's servers blocked** (90DNS, a DNS blocker or
+  Atmosphère's hosts file), or
+- a **banned console**,
+
+with a community server setup such as Nextendo's Prelude for online play (that's
+what it's tested with). BedrockLink never contacts Nintendo and never changes the
+hosts lines that keep Nintendo blocked. So far it has been tested on a console that
+isn't banned; reports from banned consoles are welcome.
+
 <p align="center">
   <img src="docs/images/routing-on.jpg" width="49%" alt="BedrockLink with routing on">
   <img src="docs/images/routing-off.jpg" width="49%" alt="BedrockLink with routing off">
