@@ -115,7 +115,7 @@ Needs Docker; devkitPro runs in a container.
 ./tests/run_pc_gui.sh "ADADA" "My Server|203.0.113.10|19132"   # the GUI on the PC, a screenshot per button press
 ```
 
-`tools/` has the logo generator, the screenshot redaction tool, a reader for
+`tools/` has the logo and Homebrew App Store art generators, the screenshot redaction tool, a reader for
 Atmosphère's DNS debug log and `lan_relay.py` (a LAN relay for a PC, kept from
 development).
 
