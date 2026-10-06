@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink GUI: one screen with three cards (Microsoft sign-in, your server,
-// joining from Minecraft), a details page and a confirmation dialog. Buttons and
-// touch. All behaviour lives in app.c; this file only draws and dispatches.
+// BetterBedrock NX GUI: two pages switched with L/R - Online (Microsoft sign-in, your
+// server, joining from Minecraft) and Graphics (Vibrant Visuals and its profiles) -
+// plus a details page and a confirmation dialog. Buttons and touch. All behaviour
+// lives in app.c; this file only draws and dispatches.
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,15 +22,20 @@ static const gfx_color TEXT = {236, 240, 245, 255}, MUTED = {148, 160, 178, 255}
 static const gfx_color GREEN = {74, 222, 128, 255}, GREEN_DARK = {21, 128, 61, 255}, GREEN_BG = {14, 42, 28, 255};
 static const gfx_color RED = {248, 113, 113, 255}, YELLOW = {250, 204, 21, 255}, SHADE = {0, 0, 0, 170};
 
-typedef enum { I_MS, I_NAME, I_ADDRESS, I_PORT, I_TEST, I_FEATURED, I_VIA, I_BC, I_ROUTING, I_RESTART, I_COUNT } item;
-typedef enum { PAGE_MAIN, PAGE_DETAILS } page;
+typedef enum {
+    I_MS, I_NAME, I_ADDRESS, I_PORT, I_TEST, I_FEATURED, I_VIA, I_BC, I_ROUTING,  // Online
+    I_VV, I_PROFILE,                                                             // Graphics
+    I_RESTART, I_COUNT
+} item;
+typedef enum { PAGE_MAIN, PAGE_GRAPHICS, PAGE_DETAILS } page;
 
 static item g_focus = I_NAME;
+static item g_focus_other = I_VV;  // the other page's focus, kept while away
 static page g_page = PAGE_MAIN;
 static bool g_confirm_undo;
 static bool g_testing;
 static SDL_Rect g_hit[I_COUNT];
-static SDL_Rect g_hit_undo, g_hit_cancel;
+static SDL_Rect g_hit_undo, g_hit_cancel, g_hit_tab[2];
 
 // ---- small widgets ----
 
@@ -39,9 +45,13 @@ static void card(int x, int y, int w, int h, const char *title) {
     if (title) gfx_text(FONT_L, x + 24, y + 16, TEXT, title);
 }
 
+static bool is_focused(item i) {
+    return g_focus == i && g_page != PAGE_DETAILS && !g_confirm_undo;
+}
+
 static void focus_bg(item i, int x, int y, int w, int h) {
     g_hit[i] = (SDL_Rect){x, y, w, h};
-    if (g_focus != i || g_page != PAGE_MAIN || g_confirm_undo) return;
+    if (!is_focused(i)) return;
     gfx_round(x, y, w, h, 12, FOCUS);
     gfx_round(x, y + 8, 4, h - 16, 2, GREEN);
 }
@@ -59,7 +69,7 @@ static void button_glyph(int cx, int cy, const char *label, gfx_color bg, gfx_co
 // A button; `primary` fills it green. Returns nothing; registers its hit area.
 static void button(item i, int x, int y, int w, int h, const char *label, bool primary, bool enabled) {
     g_hit[i] = (SDL_Rect){x, y, w, h};
-    bool focused = g_focus == i && g_page == PAGE_MAIN && !g_confirm_undo;
+    bool focused = is_focused(i);
     gfx_color bg = !enabled ? CHIP : primary ? GREEN_DARK : CHIP;
     if (focused) gfx_round(x - 4, y - 4, w + 8, h + 8, 14, GREEN);
     gfx_round(x, y, w, h, 11, bg);
@@ -94,8 +104,19 @@ static gfx_color test_color(const test_result *t) {
 static void draw_header(void) {
     gfx_gradient(0, 0, GFX_W, GFX_H, BG_TOP, BG_BOTTOM);
     gfx_logo(40, 18, 72);
-    gfx_text(FONT_XL, 128, 20, TEXT, "BedrockLink");
-    gfx_text(FONT_S, 130, 68, MUTED, "Microsoft sign-in and your own server for Minecraft on Nextendo");
+    gfx_text(FONT_XL, 128, 20, TEXT, "BetterBedrock NX");
+    // page tabs: L / R
+    static const char *const tabs[2] = {"Online", "Graphics"};
+    int tx = 130;
+    for (int t = 0; t < 2; t++) {
+        bool active = (t == 0) == (g_page == PAGE_MAIN) && g_page != PAGE_DETAILS;
+        int tw = gfx_text_w(FONT_S, tabs[t]) + 62;
+        g_hit_tab[t] = (SDL_Rect){tx, 66, tw, 32};
+        gfx_round(tx, 66, tw, 32, 16, active ? GREEN_DARK : CHIP);
+        button_glyph(t == 0 ? tx + 18 : tx + tw - 18, 82, t == 0 ? "L" : "R", active ? TEXT : DIM, active ? GREEN_DARK : CHIP);
+        gfx_text(FONT_S, t == 0 ? tx + 40 : tx + 16, 66 + (32 - gfx_text_h(FONT_S)) / 2, active ? TEXT : MUTED, tabs[t]);
+        tx += tw + 10;
+    }
     int x = 1240;
     x = chip(x, 22, "v" APP_VERSION_STR, DIM);
     x = chip(x, 22, app_active_file(), MUTED);
@@ -150,7 +171,7 @@ static void draw_server(int x, int y, int w, int h) {
 
 static void selector_row(item i, int x, int y, int w, const char *label, const char *value, const char *sub) {
     focus_bg(i, x + 12, y, w - 24, 62);
-    bool focused = g_focus == i && g_page == PAGE_MAIN && !g_confirm_undo;
+    bool focused = is_focused(i);
     gfx_text(FONT_M, x + 28, y + (62 - gfx_text_h(FONT_M)) / 2, MUTED, label);
     int x0 = x + w - 300, x1 = x + w - 34, mid = (x0 + x1) / 2;
     arrows(x0, x1, y + (sub ? 22 : 31), focused);
@@ -192,7 +213,7 @@ static void draw_join(int x, int y, int w, int h) {
                                                 : "Off - still active until a restart";
     gfx_color sc = rs == ROUTING_ON ? GREEN : rs == ROUTING_OFF ? MUTED : YELLOW;
     gfx_text_fit(FONT_S, x + 28, y + 324, w - 180, 0, sc, state);
-    toggle(x + w - 124, y + 294, on, g_focus == I_ROUTING && g_page == PAGE_MAIN && !g_confirm_undo);
+    toggle(x + w - 124, y + 294, on, is_focused(I_ROUTING));
 
     int by = y + 370, bh = h - (by - y) - 20;
     gfx_round(x + 20, by, w - 40, bh, 14, rs == ROUTING_ON ? GREEN_DARK : CARD_EDGE);
@@ -213,6 +234,91 @@ static void draw_join(int x, int y, int w, int h) {
     }
 }
 
+// ---- Graphics page ----
+
+static void draw_footer(bool details);
+
+static void draw_vv(int x, int y, int w, int h) {
+    card(x, y, w, h, "Vibrant Visuals");
+    const gfx_state *g = app_gfx();
+    const gfx_profile_def *d = gfx_profile_get(g->chosen);
+    bool on = g->patch == 1;
+    const char *line = on ? "On - for Minecraft " GFX_GAME_VERSION
+                     : g->patch < 0 ? "Another file sits where the patch goes"
+                                    : "Off - Minecraft's usual graphics";
+    gfx_circle(x + 32, y + 70, 7, on ? GREEN : g->patch < 0 ? YELLOW : DIM);
+    gfx_text_fit(FONT_M, x + 50, y + 56, w - 74, 0, TEXT, line);
+    gfx_text_fit(FONT_S, x + 24, y + 88, w - 48, 0, MUTED,
+                 "Lighting, shadows, sky and water from the newer consoles.");
+
+    focus_bg(I_VV, x + 12, y + 122, w - 24, 72);
+    gfx_text(FONT_L, x + 28, y + 132, TEXT, "Vibrant Visuals");
+    gfx_text_fit(FONT_S, x + 28, y + 166, w - 180, 0, MUTED, "Applies the next time Minecraft starts");
+    toggle(x + w - 124, y + 136, on, is_focused(I_VV));
+
+    char sub[64];
+    snprintf(sub, sizeof sub, "%s / %s docked", d->res_handheld, d->res_docked);
+    selector_row(I_PROFILE, x, y + 206, w, "Profile", d->name, sub);
+
+    char v[96];
+    int ty = y + 284;
+    snprintf(v, sizeof v, "%d x %d map, redrawn %s", d->shadow_resolution, d->shadow_resolution,
+             d->shadow_every > 1 ? "every 2nd frame" : "every frame");
+    gfx_text(FONT_S, x + 28, ty, MUTED, "Shadows");
+    gfx_text_fit(FONT_S, x + 160, ty, w - 188, 0, TEXT, v);
+    snprintf(v, sizeof v, "%d chunks with Vibrant Visuals", d->distance);
+    gfx_text(FONT_S, x + 28, ty + 28, MUTED, "Distance");
+    gfx_text_fit(FONT_S, x + 160, ty + 28, w - 188, 0, TEXT, v);
+    snprintf(v, sizeof v, "bloom %s, clouds %s, %s", d->bloom ? "on" : "off", d->clouds,
+             strcmp(d->reflections, "off") ? "light reflections and fog" : "no reflections or fog");
+    gfx_text(FONT_S, x + 28, ty + 56, MUTED, "Effects");
+    gfx_text_fit(FONT_S, x + 160, ty + 56, w - 188, 0, TEXT, v);
+
+    int by = y + 378, bh = h - (by - y) - 20;
+    gfx_round(x + 20, by, w - 40, bh, 14, on ? GREEN_DARK : CARD_EDGE);
+    gfx_round(x + 22, by + 2, w - 44, bh - 4, 12, on ? GREEN_BG : CARD);
+    gfx_text(FONT_S, x + 40, by + 12, MUTED, "In Minecraft");
+    if (g->tuning == -2 && on) {
+        gfx_text_fit(FONT_M, x + 40, by + 40, w - 80, 0, YELLOW, "The profile files were edited -");
+        gfx_text_fit(FONT_M, x + 40, by + 70, w - 80, 0, YELLOW, "pick a profile to write them again");
+    } else if (on) {
+        gfx_text_fit(FONT_M, x + 40, by + 40, w - 80, 0, TEXT, "Settings > Video > Mode > Vibrant Visuals");
+        gfx_text_fit(FONT_S, x + 40, by + 76, w - 80, 0, GREEN, "After a change: close Minecraft fully, then start it.");
+    } else {
+        gfx_text_fit(FONT_M, x + 40, by + 40, w - 80, 0, TEXT, "Turn Vibrant Visuals on, then start");
+        gfx_text_fit(FONT_M, x + 40, by + 70, w - 80, 0, TEXT, "Minecraft and choose it under Video");
+    }
+}
+
+static void tip(int x, int y, int w, const char *title, const char *text) {
+    gfx_circle(x + 30, y + 13, 5, GREEN);
+    gfx_text_fit(FONT_M, x + 46, y, w - 70, 0, TEXT, title);
+    gfx_text_fit(FONT_S, x + 46, y + 30, w - 70, 0, MUTED, text);
+}
+
+static void draw_tips(int x, int y, int w, int h) {
+    card(x, y, w, h, "Run it smoother");
+    int ty = y + 64;
+    tip(x, ty, w, "Overclock while you play", "Vibrant Visuals needs it on a Switch 1: raise the GPU");
+    gfx_text_fit(FONT_S, x + 46, ty + 54, w - 70, 0, MUTED, "and memory clocks for Minecraft in your clock tool.");
+    ty += 96;
+    tip(x, ty, w, "Fast in handheld", "480p and the lightest shadows; Balanced suits docked.");
+    ty += 72;
+    tip(x, ty, w, "Keep graphics mode switching off", "Video > In-game graphics mode switching keeps both");
+    gfx_text_fit(FONT_S, x + 46, ty + 54, w - 70, 0, MUTED, "renderers in memory while you play.");
+    ty += 96;
+    tip(x, ty, w, "Render distance 8 or less", "Video > Render Distance: fewer chunks to build.");
+    ty += 72;
+    tip(x, ty, w, "Steady frames", "A frame-rate limit (Video, or FPSLocker) evens out drops.");
+}
+
+static void draw_graphics(void) {
+    draw_header();
+    draw_vv(40, 116, 584, 516);
+    draw_tips(656, 116, 584, 516);
+    draw_footer(false);
+}
+
 static void draw_footer(bool details) {
     gfx_fill(40, 648, 1200, 1, CARD_EDGE);
     const char *msg;
@@ -220,17 +326,23 @@ static void draw_footer(bool details) {
     gfx_color mc = k == ST_OK ? GREEN : k == ST_ERROR ? RED : MUTED;
     int hints_x = 1240;
     // right-aligned button hints
-    const char *labels[4];
-    const char *keys[4];
+    const char *labels[6];
+    const char *keys[6];
     int n = 0;
     if (details) {
         keys[n] = "B", labels[n++] = "Back";
     } else if (g_confirm_undo) {
         keys[n] = "B", labels[n++] = "Cancel";
         keys[n] = "A", labels[n++] = "Undo";
+    } else if (g_page == PAGE_GRAPHICS) {
+        keys[n] = "+", labels[n++] = "Exit";
+        keys[n] = "L", labels[n++] = "Online";
+        if (g_focus == I_PROFILE) keys[n] = "<>", labels[n++] = "Change";
+        keys[n] = "A", labels[n++] = "Select";
     } else {
         keys[n] = "+", labels[n++] = "Exit";
         keys[n] = "X", labels[n++] = "Details";
+        keys[n] = "R", labels[n++] = "Graphics";
         if (g_focus == I_FEATURED || g_focus == I_VIA) keys[n] = "<>", labels[n++] = "Change";
         keys[n] = "A", labels[n++] = "Select";
     }
@@ -326,6 +438,7 @@ static void draw_main(void) {
 
 static void draw(void) {
     if (g_page == PAGE_DETAILS) draw_details();
+    else if (g_page == PAGE_GRAPHICS) draw_graphics();
     else draw_main();
     gfx_present();
 }
@@ -333,8 +446,9 @@ static void draw(void) {
 // ---- input ----
 
 static bool visible(item i) {
-    if (i == I_BC) return app_cfg()->via == ROUTE_VIA_BEDROCKCONNECT;
     if (i == I_RESTART) return app_restart_needed();
+    if ((i == I_VV || i == I_PROFILE) != (g_page == PAGE_GRAPHICS)) return false;
+    if (i == I_BC) return app_cfg()->via == ROUTE_VIA_BEDROCKCONNECT;
     return true;
 }
 
@@ -343,6 +457,18 @@ static void move_focus(int dir) {
     do i = (item)((i + dir + I_COUNT) % I_COUNT);
     while (!visible(i));
     g_focus = i;
+}
+
+static void set_page(page p) {
+    if (p == g_page || p == PAGE_DETAILS || g_page == PAGE_DETAILS) {
+        g_page = p;
+        return;
+    }
+    item keep = g_focus;
+    g_page = p;
+    g_focus = g_focus_other;
+    g_focus_other = keep;
+    if (!visible(g_focus)) move_focus(1);
 }
 
 static void trim(char *s) {
@@ -416,6 +542,12 @@ static void activate(item i, int dir) {
         case I_ROUTING:
             app_routing_toggle();
             break;
+        case I_VV:
+            app_gfx_toggle();
+            break;
+        case I_PROFILE:
+            app_gfx_cycle_profile(dir ? dir : 1);
+            break;
         case I_RESTART:
             app_restart();
             break;
@@ -436,13 +568,16 @@ static void on_buttons(u64 down) {
         return;
     }
     if (g_page == PAGE_DETAILS) {
-        if (down & (HidNpadButton_B | HidNpadButton_X)) g_page = PAGE_MAIN;
+        if (down & (HidNpadButton_B | HidNpadButton_X)) set_page(PAGE_MAIN);
         return;
     }
-    if (down & HidNpadButton_X) g_page = PAGE_DETAILS;
+    if (down & (HidNpadButton_L | HidNpadButton_ZL)) set_page(PAGE_MAIN);
+    else if (down & (HidNpadButton_R | HidNpadButton_ZR)) set_page(PAGE_GRAPHICS);
+    else if ((down & HidNpadButton_X) && g_page == PAGE_MAIN) set_page(PAGE_DETAILS);
     else if (down & HidNpadButton_AnyUp) move_focus(-1);
     else if (down & HidNpadButton_AnyDown) move_focus(1);
-    else if ((down & (HidNpadButton_AnyLeft | HidNpadButton_AnyRight)) && (g_focus == I_FEATURED || g_focus == I_VIA))
+    else if ((down & (HidNpadButton_AnyLeft | HidNpadButton_AnyRight)) &&
+             (g_focus == I_FEATURED || g_focus == I_VIA || g_focus == I_PROFILE))
         activate(g_focus, (down & HidNpadButton_AnyLeft) ? -1 : 1);
     else if (down & HidNpadButton_A) activate(g_focus, 0);
 }
@@ -462,13 +597,19 @@ static void on_touch(int x, int y) {
         return;
     }
     if (g_page == PAGE_DETAILS) {
-        g_page = PAGE_MAIN;
+        set_page(PAGE_MAIN);
         return;
+    }
+    for (int t = 0; t < 2; t++) {
+        if (inside(g_hit_tab[t], x, y)) {
+            set_page(t == 0 ? PAGE_MAIN : PAGE_GRAPHICS);
+            return;
+        }
     }
     for (int i = 0; i < I_COUNT; i++) {
         if (!visible((item)i) || !inside(g_hit[i], x, y)) continue;
         g_focus = (item)i;
-        if (i == I_FEATURED || i == I_VIA) {
+        if (i == I_FEATURED || i == I_VIA || i == I_PROFILE) {
             // the arrows sit in the right part of the row
             SDL_Rect r = g_hit[i];
             int x0 = r.x + r.w - 288, mid = x0 + 134;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink app logic. See app.h.
+// BetterBedrock NX app logic. See app.h.
 #include "app.h"
 
 #include <arpa/inet.h>
@@ -19,7 +19,7 @@
 #include "nx_control.h"
 #include "raknet_ping.h"
 
-#define APP_DIR       "sdmc:/switch/BedrockLink"
+#define APP_DIR       "sdmc:/switch/BetterBedrockNX"
 #define BACKUP_DIR    APP_DIR "/backup"
 #define LOG_PATH      APP_DIR "/log.txt"
 #define LOG_MAX_BYTES (256 * 1024)
@@ -77,6 +77,7 @@ static char g_status[256];
 static route_state g_route;
 static route_config g_cfg;  // what server.ini says, complete or not
 static test_result g_test, g_test_bc;
+static gfx_state g_gfx;
 
 void app_set_status(status_kind kind, const char *fmt, ...) {
     va_list ap;
@@ -333,7 +334,7 @@ void app_ms_fix(bool disable) {
     log_state(disable ? "after sign-in fix on" : "after sign-in fix off");
 
     if (failed)
-        app_set_status(ST_ERROR, "%d file(s) could not be changed - see /switch/BedrockLink/log.txt", failed);
+        app_set_status(ST_ERROR, "%d file(s) could not be changed - see /switch/BetterBedrockNX/log.txt", failed);
     else if (written)
         app_set_status(ST_OK, "Sign-in fix %s%s", disable ? "on" : "off",
                        live ? " - in effect now." : ". Restart the console to use it.");
@@ -572,6 +573,34 @@ void app_routing_toggle(void) {
     apply_route(!g_route.hosts_route_on);
 }
 
+// ---- Graphics ----
+
+static void log_gfx(const char *when) {
+    log_line("[%s] graphics: patch=%d tuning=%d chosen=%s", when, g_gfx.patch, g_gfx.tuning,
+             gfx_profile_get(g_gfx.chosen)->name);
+}
+
+const gfx_state *app_gfx(void) { return &g_gfx; }
+
+void app_gfx_toggle(void) {
+    char msg[200];
+    bool on = g_gfx.patch != 1;
+    bool ok = gfx_set_vv(on, g_gfx.chosen, msg, sizeof msg);
+    gfx_query(&g_gfx);
+    log_line("vibrant visuals %s: %s", on ? "on" : "off", msg);
+    log_gfx("after");
+    app_set_status(ok ? ST_OK : ST_ERROR, "%s", msg);
+}
+
+void app_gfx_cycle_profile(int dir) {
+    char msg[200];
+    gfx_profile p = (gfx_profile)(((int)g_gfx.chosen + dir + GFX_PROFILE_COUNT) % GFX_PROFILE_COUNT);
+    bool ok = gfx_set_profile(p, msg, sizeof msg);
+    gfx_query(&g_gfx);
+    log_line("profile %s: %s", gfx_profile_get(p)->name, msg);
+    app_set_status(ok ? ST_OK : ST_ERROR, "%s", msg);
+}
+
 bool app_restart_needed(void) { return g_restart_needed; }
 
 void app_restart(void) {
@@ -619,10 +648,17 @@ bool app_hosts_file(int i, char *name, size_t cap, bool *active, he_stats *st) {
 void app_init(bool sockets) {
     g_sockets = sockets;
     mkdir(APP_DIR, 0777);
-    log_line("BedrockLink " APP_VERSION_STR " start (sockets %s)", sockets ? "up" : "unavailable");
+    log_line("BetterBedrock NX " APP_VERSION_STR " start (sockets %s)", sockets ? "up" : "unavailable");
+    // BedrockLink 1.x: its app and overlay would sit next to these (two overlays
+    // switching the same route). Its log and backups in /switch/BedrockLink stay.
+    static const char *const old[] = {"sdmc:/switch/.overlays/bedrocklink.ovl", "sdmc:/switch/BedrockLink/BedrockLink.nro"};
+    for (size_t i = 0; i < sizeof old / sizeof old[0]; i++)
+        if (remove(old[i]) == 0) log_line("removed BedrockLink 1.x: %s", old[i]);
     load_all();
     load_route();
+    gfx_query(&g_gfx);
     log_state("start");
+    log_gfx("start");
 }
 
 void app_exit(void) {

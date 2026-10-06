@@ -1,43 +1,45 @@
-<p align="center"><img src="assets/logo-512.png" width="160" alt="BedrockLink logo"></p>
+<p align="center"><img src="assets/logo-512.png" width="160" alt="BetterBedrock NX logo"></p>
 
-# BedrockLink
+# BetterBedrock NX
 
-Homebrew for a modded Nintendo Switch that runs Minecraft (Bedrock) on an emuMMC
-with Nintendo's servers replaced or blocked:
+A Minecraft (Bedrock) toolkit for a modded Nintendo Switch on Atmosphère. Formerly
+**BedrockLink**.
 
-1. **Microsoft sign-in fix.** Some community-server setups (Nextendo's Prelude, from
-   3.5.7) redirect Microsoft's sign-in servers in Atmosphère's hosts file, so
-   Minecraft can't sign in to your Microsoft account. BedrockLink turns off just
-   those lines.
-2. **Join your own server.** Minecraft on Switch has no "Add Server" button.
-   BedrockLink turns one featured server in **Play > Servers** (Galaxite, The Hive,
-   ...) into a door to the server you choose, through
-   [BedrockConnect](https://github.com/Pugmatt/BedrockConnect) (any port) or
-   directly (servers on port 19132).
+- **Microsoft sign-in fix.** Some community-server setups (Nextendo's Prelude, from
+  3.5.7) redirect Microsoft's sign-in servers in Atmosphère's hosts file, so Minecraft
+  can't sign in to your Microsoft account. BetterBedrock NX turns off just those lines.
+- **Join your own server.** Minecraft on Switch has no "Add Server" button. One
+  featured server in **Play > Servers** becomes a door to the server you choose,
+  through [BedrockConnect](https://github.com/Pugmatt/BedrockConnect) (any port) or
+  directly (servers on port 19132).
+- **Vibrant Visuals on a Switch 1.** The original Switch's Minecraft has Vibrant
+  Visuals built in but switched off. BetterBedrock NX switches it on (Minecraft
+  1.26.44), with **Fast / Balanced / Quality** profiles tuned for the Switch 1.
+- **An overlay** (Ultrahand/Tesla) to switch server routing on and off in game.
 
-Everything is done with one or two clearly marked lines in Atmosphère's hosts file.
-Nintendo's lines are never touched: every change is checked first, backed up, and
-takes effect at once, without a restart.
+<p align="center">
+  <img src="docs/images/vibrant-visuals.jpg" width="80%" alt="Minecraft with Vibrant Visuals on a Switch 1">
+</p>
+<p align="center"><sub>Vibrant Visuals on an original Switch (Mariko, handheld, overclocked).</sub></p>
+
+<p align="center">
+  <img src="docs/images/app-graphics.png" width="49%" alt="The Graphics page">
+  <img src="docs/images/app-online.png" width="49%" alt="The Online page">
+</p>
+<p align="center"><sub>The app's two pages (PC preview build, sample server).</sub></p>
 
 ## Who it's for
 
-Anyone who wants to play Minecraft (Bedrock) online on a Switch that stays off
-Nintendo's servers:
+Anyone who plays Minecraft (Bedrock) on a Switch that stays off Nintendo's servers:
 
-- an **emuMMC with Nintendo's servers blocked** (90DNS, a DNS blocker or
-  Atmosphère's hosts file), or
+- an **emuMMC with Nintendo's servers blocked** (90DNS, a DNS blocker or Atmosphère's
+  hosts file), or
 - a **banned console**,
 
-with a community server setup such as Nextendo's Prelude for online play (that's
-what it's tested with). BedrockLink never contacts Nintendo and never changes the
-hosts lines that keep Nintendo blocked. So far it has been tested on a console that
-isn't banned; reports from banned consoles are welcome.
-
-<p align="center">
-  <img src="docs/images/routing-on.jpg" width="49%" alt="BedrockLink with routing on">
-  <img src="docs/images/routing-off.jpg" width="49%" alt="BedrockLink with routing off">
-</p>
-<p align="center"><sub>Screenshots from a Switch; the server's details are blurred.</sub></p>
+with a community server setup such as Nextendo's Prelude for online play (that's what
+it's tested with). Vibrant Visuals works offline too. BetterBedrock NX never contacts
+Nintendo and never changes the hosts lines that keep Nintendo blocked. So far it has
+been tested on a console that isn't banned; reports from banned consoles are welcome.
 
 ## Requirements
 
@@ -45,26 +47,36 @@ isn't banned; reports from banned consoles are welcome.
   default).
 - **Minecraft** (Bedrock) for Switch and a **Microsoft account**.
 - To join your own server: a Bedrock or Geyser server, and its address and port.
+- For Vibrant Visuals: **Minecraft 1.26.44** exactly (other versions simply don't get
+  the patch), and an **overclock** (sys-clk, Horizon OC or similar) - it isn't playable
+  at stock clocks.
 - Optional: **Ultrahand** or **Tesla Menu** for the overlay.
 
 ## Install
 
-Download `BedrockLink-<version>.zip` from the
-[releases](../../releases) and unzip it to the root of the SD card:
+Download `BetterBedrockNX-<version>.zip` from the [releases](../../releases) and unzip
+it to the root of the SD card:
 
 ```
-switch/BedrockLink/BedrockLink.nro     the app (homebrew menu)
-switch/.overlays/bedrocklink.ovl       the overlay (optional)
+switch/BetterBedrockNX/BetterBedrockNX.nro   the app (homebrew menu)
+switch/.overlays/betterbedrock-nx.ovl        the overlay (optional)
 ```
+
+**Coming from BedrockLink?** Your server settings carry over. The first start removes
+the old BedrockLink app and overlay files (so you don't get two overlays); its old
+`/switch/BedrockLink` folder (log and backups) is left for you to delete.
 
 ## Use
 
-Open **BedrockLink** from the homebrew menu.
+Open **BetterBedrock NX** from the homebrew menu. **L** and **R** switch between its
+two pages; touch works too.
+
+### Online
 
 **Microsoft sign-in.** If the card says *Broken*, select **Fix sign-in**. Minecraft
 then signs in with the real Microsoft (Play > Sign in, then enter the code at
 aka.ms/remoteconnect). If you switch modes in Prelude later, it rewrites the hosts
-files: open BedrockLink and fix the sign-in again.
+files: open the app and fix the sign-in again.
 
 **Your server.**
 
@@ -83,11 +95,35 @@ files: open BedrockLink and fix the sign-in again.
      it for next time.
    - With Direct, you join your server straight away.
 
-Switch **Routing** off when you want the real featured server back. The overlay
-(*BedrockLink* in Ultrahand/Tesla) has the same on/off switch.
+Switch **Routing** off when you want the real featured server back. The overlay has
+the same on/off switch. Press **X** for details: where each Microsoft and Nintendo
+host goes, and the state of each hosts file.
 
-Press **X** in the app for details: where each Microsoft and Nintendo host goes, and
-the state of each hosts file.
+### Graphics
+
+1. Switch **Vibrant Visuals** on and pick a **profile**:
+
+   | | Fast | Balanced | Quality |
+   |---|---|---|---|
+   | Resolution, handheld / docked | 480p / 540p | 540p / 720p | 720p / 720p |
+   | Shadows | 1024 map, every 2nd frame, no cloud shadows | 1024, every 2nd frame | 2048, every frame |
+   | Vibrant Visuals distance | 6 chunks | 8 chunks | 10 chunks |
+   | Effects | no bloom | bloom | bloom, light reflections and fog |
+
+2. Close Minecraft fully if it's running, then start it.
+3. In Minecraft: **Settings > Video > Mode > Vibrant Visuals**.
+
+Changes apply the next time Minecraft starts. Switching Vibrant Visuals off in the
+app removes everything it installed. What to expect: on a Mariko Switch in handheld
+with a high overclock, Vibrant Visuals ran at **20-25 fps with Mojang's own settings**;
+the profiles are lighter than those. It is not playable at stock clocks.
+
+**Run it smoother** (also on the Graphics page): overclock the GPU and memory while
+you play; use Fast in handheld; keep *In-game graphics mode switching* off (it keeps
+both renderers in memory); keep the render distance at 8 chunks or less; set a frame
+rate limit (Video settings or FPSLocker) to even out drops.
+
+How the unlock works, and exactly what it changes: [docs/vibrant-visuals.md](docs/vibrant-visuals.md).
 
 ### Privacy
 
@@ -96,8 +132,8 @@ you join does) and stores the servers you save in its menu. If you'd rather not 
 the public one, run your own [BedrockConnect](https://github.com/Pugmatt/BedrockConnect)
 and enter its address in the app, or use Direct.
 
-BedrockLink itself contacts nothing on its own; *Test connection* sends one status
-ping to your server and to the BedrockConnect server.
+The app contacts nothing on its own; *Test connection* sends one status ping to your
+server and to the BedrockConnect server.
 
 ## Good to know
 
@@ -107,42 +143,52 @@ ping to your server and to the BedrockConnect server.
   [docs/how-it-works.md](docs/how-it-works.md).
 - **Other featured servers** and the rest of Minecraft's online services are not
   changed.
-- **Backups** of every hosts file BedrockLink changed are in
-  `/switch/BedrockLink/backup/` and `/config/bedrocklink/backup/`; everything it did
-  is logged in `/switch/BedrockLink/log.txt`.
-- **Use at your own risk.** BedrockLink doesn't contact Nintendo and never edits
-  Nintendo lines, but it can't make any promise about what Nintendo, Microsoft or
-  a game does.
+- **Minecraft updates:** the Vibrant Visuals patch matches one exact build. After a
+  game update it is skipped (Minecraft runs as normal) until BetterBedrock NX is
+  updated for the new version.
+- **Files it writes:** the hosts files (one marked block, plus the sign-in fix),
+  `/config/betterbedrock-nx/`, and for Vibrant Visuals
+  `/atmosphere/exefs_patches/betterbedrock-nx-vv/` and three files under
+  `/atmosphere/contents/0100D71004694000/romfs/`. Backups of every hosts file it
+  changed are in `/switch/BetterBedrockNX/backup/` and `/config/betterbedrock-nx/backup/`;
+  everything it did is logged in `/switch/BetterBedrockNX/log.txt`.
+- **Use at your own risk.** BetterBedrock NX doesn't contact Nintendo and never edits
+  Nintendo lines, but it can't make any promise about what Nintendo, Microsoft or a
+  game does.
 
 ### Tested on
 
 Switch (Mariko), firmware 22.5.0, Atmosphère 1.11.2, emuMMC, Minecraft 1.26.44,
-Nextendo Prelude 3.5.5 and 3.5.11, with 90DNS as the network's DNS.
+Nextendo Prelude 3.5.5 and 3.5.11, with 90DNS as the network's DNS; Horizon OC for
+the overclock.
 
 ## Build
 
 Needs Docker; devkitPro runs in a container.
 
 ```bash
-./build.sh                  # the app, the overlay and dist/BedrockLink-<version>.zip
-./tests/run_pc_tests.sh     # hosts and routing logic, on the PC
-./tests/run_pc_gui.sh "ADADA" "My Server|203.0.113.10|19132"   # the GUI on the PC, a screenshot per button press
+./build.sh                  # the app, the overlay and dist/BetterBedrockNX-<version>.zip
+./tests/run_pc_tests.sh     # hosts, routing and graphics logic, on the PC
+./tests/run_pc_gui.sh "ArA" "My Server|203.0.113.10|19132"   # the GUI on the PC, a screenshot per button press
 ```
 
-`tools/` has the logo and Homebrew App Store art generators, the screenshot redaction tool, a reader for
-Atmosphère's DNS debug log and `lan_relay.py` (a LAN relay for a PC, kept from
-development).
+`tools/` has the logo and Homebrew App Store art generators, the screenshot redaction
+tool, a reader for Atmosphère's DNS debug log and `lan_relay.py` (a LAN relay for a
+PC, kept from development).
 
 ## Credits
 
 - [BedrockConnect](https://github.com/Pugmatt/BedrockConnect) by Pugmatt (GPL-3.0):
   the in-game server list and transfer that make any port work.
-- [Atmosphère](https://github.com/Atmosphere-NX/Atmosphere): `dns.mitm` and its
-  hosts reload command.
+- [Atmosphère](https://github.com/Atmosphere-NX/Atmosphere): `dns.mitm`, its hosts
+  reload command, exefs patches and LayeredFS.
 - [libtesla](https://github.com/WerWolv/libtesla) by WerWolv (GPL-2.0): the overlay.
+- [th4llium's vibrant-visuals-patcher](https://github.com/th4llium/vibrant-visuals-patcher)
+  (Windows) and [BetterRenderDragon](https://github.com/ddf8196/BetterRenderDragon):
+  where to start looking for the Vibrant Visuals gate.
 - devkitPro, libnx, SDL2.
 
-BedrockLink is not affiliated with Nintendo, Microsoft, Mojang, Nextendo or
+BetterBedrock NX is not affiliated with Nintendo, Microsoft, Mojang, Nextendo or
 BedrockConnect. Minecraft is a trademark of Mojang/Microsoft.
 
 ## License

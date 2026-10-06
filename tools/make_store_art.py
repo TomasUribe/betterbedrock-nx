@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 """Draws the Homebrew App Store art from assets/logo-512.png.
 
-Writes icon.png (256x150), screen.png (848x208 banner) and screen1.png/screen2.png
-(1280x720, from the redacted docs/images screenshots) into <out_dir>.
+Writes icon.png (256x150), screen.png (848x208 banner) and screen1.png..screen3.png
+(1280x720, from docs/images) into <out_dir>.
 Run from the repository root: tools/make_store_art.py <out_dir>
 """
 import sys
@@ -37,12 +37,12 @@ def paste_logo(img, x, y, size):
 
 
 def title(d, x, y, px):
-    """'Bedrock' in white and 'Link' in green; returns the width."""
+    """'BetterBedrock' in white and ' NX' in green; returns the width."""
     f = ImageFont.truetype(FONT_B, px * SS)
-    d.text((x * SS, y * SS), "Bedrock", font=f, fill=TEXT)
-    w = d.textlength("Bedrock", font=f)
-    d.text((x * SS + w, y * SS), "Link", font=f, fill=GREEN)
-    return (w + d.textlength("Link", font=f)) / SS
+    d.text((x * SS, y * SS), "BetterBedrock", font=f, fill=TEXT)
+    w = d.textlength("BetterBedrock", font=f)
+    d.text((x * SS + w, y * SS), " NX", font=f, fill=GREEN)
+    return (w + d.textlength(" NX", font=f)) / SS
 
 
 def done(img, w, h, path):
@@ -54,9 +54,9 @@ def icon(out):
     img = canvas(w, h)
     paste_logo(img, (w - 104) // 2, 6, 104)
     d = ImageDraw.Draw(img)
-    f = ImageFont.truetype(FONT_B, 30 * SS)
-    tw = (d.textlength("BedrockLink", font=f)) / SS
-    title(d, (w - tw) / 2, 108, 30)
+    f = ImageFont.truetype(FONT_B, 26 * SS)
+    tw = (d.textlength("BetterBedrock NX", font=f)) / SS
+    title(d, (w - tw) / 2, 110, 26)
     done(img, w, h, f"{out}/icon.png")
 
 
@@ -65,16 +65,16 @@ def banner(out):
     img = canvas(w, h)
     paste_logo(img, 28, 14, 180)
     d = ImageDraw.Draw(img)
-    title(d, 226, 40, 64)
+    title(d, 226, 40, 58)
     f = ImageFont.truetype(FONT_R, 25 * SS)
-    d.text((230 * SS, 122 * SS), "Microsoft sign-in fix and your own server", font=f, fill=MUTED)
-    d.text((230 * SS, 154 * SS), "for Minecraft (Bedrock) on a modded Switch", font=f, fill=MUTED)
+    d.text((230 * SS, 118 * SS), "A Minecraft (Bedrock) toolkit for a modded Switch:", font=f, fill=MUTED)
+    d.text((230 * SS, 150 * SS), "online play, your own server, Vibrant Visuals", font=f, fill=MUTED)
     done(img, w, h, f"{out}/screen.png")
 
 
 def screenshots(out):
-    for i, name in enumerate(["routing-on", "routing-off"], 1):
-        Image.open(f"docs/images/{name}.jpg").convert("RGB").save(f"{out}/screen{i}.png", optimize=True)
+    for i, name in enumerate(["vibrant-visuals.jpg", "app-graphics.png", "app-online.png"], 1):
+        Image.open(f"docs/images/{name}").convert("RGB").resize((1280, 720)).save(f"{out}/screen{i}.png", optimize=True)
 
 
 if __name__ == "__main__":

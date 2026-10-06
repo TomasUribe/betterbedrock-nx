@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
-"""Hides personal details in BedrockLink console screenshots before they are published.
+"""Hides personal details in BetterBedrock NX console screenshots before they are published.
 
 Usage: tools/redact_screenshot.py <in.jpg> <out.jpg> [--box x0,y0,x1,y1 ...]
 Without --box it covers the app's server name, address and port rows and the address

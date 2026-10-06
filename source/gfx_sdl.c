@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink drawing layer on SDL2. See gfx.h.
+// BetterBedrock NX drawing layer on SDL2. See gfx.h.
 #include "gfx.h"
 
 #include <stdio.h>
@@ -21,7 +21,7 @@ static SDL_Texture *g_logo;
 bool gfx_init(void) {
 #ifdef __SWITCH__
     if (SDL_Init(SDL_INIT_VIDEO) != 0) return false;
-    g_win = SDL_CreateWindow("BedrockLink", 0, 0, GFX_W, GFX_H, 0);
+    g_win = SDL_CreateWindow("BetterBedrock NX", 0, 0, GFX_W, GFX_H, 0);
     if (!g_win) return false;
     g_ren = SDL_CreateRenderer(g_win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 #else

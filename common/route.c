@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink server routing. See route.h.
+// BetterBedrock NX server routing. See route.h.
 #include "route.h"
 
 #include <ctype.h>
@@ -75,9 +75,21 @@ static int copy(char *dst, size_t cap, const char *src) {
     return 1;
 }
 
+// BedrockLink 1.x kept its settings in /config/bedrocklink: copy them once.
+static void migrate_config(void) {
+    if (exists(ROUTE_CONFIG_PATH)) return;
+    size_t len = 0;
+    char *old = read_all(ROUTE_LEGACY_CONFIG_PATH, &len);
+    if (!old) return;
+    mkdirs(ROUTE_CONFIG_DIR);
+    write_all(ROUTE_CONFIG_PATH, old, len);
+    free(old);
+}
+
 int route_read_config(route_config *c) {
     memset(c, 0, sizeof *c);
     c->via = ROUTE_VIA_BEDROCKCONNECT;
+    migrate_config();
     size_t len;
     char *text = read_all(ROUTE_CONFIG_PATH, &len);
     if (!text) return 0;
@@ -355,8 +367,8 @@ int route_save_config(const route_config *c, char *msg, size_t msg_cap) {
     }
     char text[1100];
     int n = snprintf(text, sizeof text,
-                     "; BedrockLink server routing. Set it in the BedrockLink app; switch it on or off\n"
-                     "; in the app or the BedrockLink overlay.\n"
+                     "; BetterBedrock NX server routing. Set it in the app; switch it on or off\n"
+                     "; in the app or the overlay.\n"
                      "[server]\n"
                      "name = %s\n"
                      "address = %s\n"
@@ -370,7 +382,7 @@ int route_save_config(const route_config *c, char *msg, size_t msg_cap) {
                      "bedrockconnect = %s\n",
                      c->name, c->address, c->port, c->replaces,
                      c->via == ROUTE_VIA_DIRECT ? "direct" : "bedrockconnect", c->bedrockconnect);
-    mkdirs("sdmc:/config/bedrocklink");
+    mkdirs(ROUTE_CONFIG_DIR);
     if (n <= 0 || (size_t)n >= sizeof text || !write_all(ROUTE_CONFIG_PATH, text, (size_t)n)) {
         snprintf(msg, msg_cap, "Saving server.ini failed");
         return 0;

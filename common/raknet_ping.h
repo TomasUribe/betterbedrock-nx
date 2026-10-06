@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // One RakNet "unconnected ping" to a Bedrock server: the same status request the
 // Servers tab sends. BSD sockets, so it runs on the Switch and on a PC.
-#ifndef BEDROCKLINK_RAKNET_PING_H
-#define BEDROCKLINK_RAKNET_PING_H
+#ifndef BBNX_RAKNET_PING_H
+#define BBNX_RAKNET_PING_H
 
 #include <stddef.h>
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink app logic: state and actions, no drawing. The GUI (gui.c) shows it.
+// BetterBedrock NX app logic: state and actions, no drawing. The GUI (gui.c) shows it.
 //
 // 1. Microsoft sign-in. Prelude's Nextendo mode also points login.live.com and
 //    *.xboxlive.com at the Nextendo server (for Minecraft Dungeons II), which breaks
@@ -9,16 +9,19 @@
 //    port), or straight at your server when it runs on port 19132.
 // Nintendo lines are never touched: every write is checked first so that each known
 // Nintendo host resolves exactly as before. Changes apply at once (hosts reload).
-#ifndef BEDROCKLINK_APP_H
-#define BEDROCKLINK_APP_H
+// 3. Graphics. Vibrant Visuals on a Switch 1 (an exefs patch for Minecraft 1.26.44)
+//    and profiles that make it run (common/graphics.h). They apply when Minecraft starts.
+#ifndef BBNX_APP_H
+#define BBNX_APP_H
 
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "graphics.h"
 #include "hosts_edit.h"
 #include "route.h"
 
-#define APP_VERSION_STR "1.4.0"
+#define APP_VERSION_STR "2.0.0"
 
 typedef enum { ST_NONE, ST_INFO, ST_OK, ST_ERROR } status_kind;
 typedef enum { MS_NOT_NEEDED, MS_OFF, MS_ON } ms_fix_state;
@@ -62,6 +65,11 @@ const test_result *app_test_bc(void);
 // Routing
 routing_state app_routing(void);
 void app_routing_toggle(void);
+
+// Graphics
+const gfx_state *app_gfx(void);
+void app_gfx_toggle(void);             // Vibrant Visuals on/off (patch + profile files)
+void app_gfx_cycle_profile(int dir);   // Fast / Balanced / Quality
 
 bool app_restart_needed(void);
 void app_restart(void);  // returns only when the restart failed (status says so)

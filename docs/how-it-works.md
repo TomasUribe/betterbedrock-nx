@@ -1,7 +1,8 @@
-# How BedrockLink works
+# How BetterBedrock NX works (online features)
 
 Technical notes behind the app, for anyone who wants to check what it does or build
 on it. Everything here was measured on one console (see "Tested on" in the README).
+Vibrant Visuals has its own page: [vibrant-visuals.md](vibrant-visuals.md).
 
 ## Atmosphère's hosts file
 
@@ -15,7 +16,7 @@ characters, `%` stands for `lp1`, and **the last matching line wins**. When
 
 `dns.mitm` serves every process, and its `sfdnsres` interface has one extra command,
 **65000 `AtmosphereReloadHostsFile`**, which re-reads the hosts file at once. Any
-process can send it. BedrockLink uses it after every change, so nothing needs a
+process can send it. BetterBedrock NX uses it after every change, so nothing needs a
 restart; if the reload fails, the app asks for a restart instead.
 
 ## 1. The Microsoft sign-in fix
@@ -33,7 +34,7 @@ prefix, so the files come back byte for byte. Lines that mix Microsoft and other
 hosts, or catch-alls such as `127.0.0.1 *`, are left alone and reported.
 
 Prelude rewrites its hosts files whenever you pick a mode, which brings the Microsoft
-lines back: open BedrockLink and fix the sign-in again.
+lines back: open the app and fix the sign-in again.
 
 ## 2. Joining your own server
 
@@ -80,6 +81,10 @@ Routing writes one marked block at the end of the hosts file Atmosphère reads:
 # --- end of BedrockLink route ---
 ```
 
+The marker lines, and the sign-in fix's `#[bedrocklink] ` prefix, keep the name the
+app had before 2.0 (BedrockLink), so blocks and fixes made by older versions are
+still found.
+
 Turning routing off removes the block from every hosts file.
 
 ## Safety rules, enforced on every write
@@ -87,27 +92,28 @@ Turning routing off removes the block from every hosts file.
 - A write is refused unless every known Nintendo host (accounts, baas, dauth, aauth,
   telemetry, error reports, system and game update checks, connection test, ...)
   resolves exactly as before, with and without Atmosphère's defaults.
-- A routing write is also refused unless every line outside the BedrockLink block is
+- A routing write is also refused unless every line outside the marked block is
   unchanged.
 - Featured hosts and server addresses are checked: no Nintendo or Microsoft sign-in
   hosts, no loopback, `0.x` or broadcast addresses, no wildcards.
-- Before each write the file is backed up (`/switch/BedrockLink/backup/` for the
-  sign-in fix, `/config/bedrocklink/backup/` for routing: `.orig` = first version seen,
+- Before each write the file is backed up (`/switch/BetterBedrockNX/backup/` for the
+  sign-in fix, `/config/betterbedrock-nx/backup/` for routing: `.orig` = first version seen,
   `.prev` = the version just before the latest write), and every write is read back
   and compared.
 - Routing is for emuMMC boots only.
 
-BedrockLink contacts nothing on its own. *Test connection* sends one status ping to
+BetterBedrock NX contacts nothing on its own. *Test connection* sends one status ping to
 your server and, for BedrockConnect, one to the BedrockConnect server.
 
 ## Files
 
 | Path | What |
 |---|---|
-| `/switch/BedrockLink/BedrockLink.nro` | the app |
-| `/switch/.overlays/bedrocklink.ovl` | the overlay (optional) |
-| `/config/bedrocklink/server.ini` | your server and routing settings |
-| `/switch/BedrockLink/log.txt` | what the app did, with every hosts change |
+| `/switch/BetterBedrockNX/BetterBedrockNX.nro` | the app |
+| `/switch/.overlays/betterbedrock-nx.ovl` | the overlay (optional) |
+| `/config/betterbedrock-nx/server.ini` | your server and routing settings |
+| `/config/betterbedrock-nx/graphics.ini` | the chosen Vibrant Visuals profile |
+| `/switch/BetterBedrockNX/log.txt` | what the app did, with every hosts change |
 
 ## Development notes
 

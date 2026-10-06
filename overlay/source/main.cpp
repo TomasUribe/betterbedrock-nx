@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink overlay: switches server routing on or off.
+// BetterBedrock NX overlay: switches server routing on or off.
 //
 // Routing on = one marked line in the hosts file Atmosphere reads, pointing a
 // Minecraft featured server at a BedrockConnect server (or straight at your server
 // when it runs on port 19132). Changes apply at once: dns.mitm reloads the hosts
-// file. Off = no line, and the console behaves exactly as it did before BedrockLink.
-// Settings are made in the BedrockLink app.
+// file. Off = no line, and the console behaves exactly as it did before BetterBedrock NX.
+// Settings are made in the BetterBedrock NX app.
 #define TESLA_INIT_IMPL
 #include <tesla.hpp>
 
@@ -20,7 +20,7 @@ extern "C" {
 
 namespace {
 
-    constexpr const char *kVersion = "v1.4.0";
+    constexpr const char *kVersion = "v2.0.0";
     constexpr SplConfigItem kEmummcType = static_cast<SplConfigItem>(65007);
     constexpr tsl::Color kGreen = {0x5, 0xF, 0x5, 0xF};
     constexpr tsl::Color kRed = {0xF, 0x6, 0x6, 0xF};
@@ -52,7 +52,7 @@ namespace {
         public:
             tsl::elm::Element *createUI() override {
                 refresh();
-                auto *frame = new tsl::elm::OverlayFrame("BedrockLink", kVersion);
+                auto *frame = new tsl::elm::OverlayFrame("BetterBedrock NX", kVersion);
                 auto *list = new tsl::elm::List();
 
                 list->addItem(new tsl::elm::CategoryHeader("Server routing"));
@@ -81,7 +81,7 @@ namespace {
                         r->drawString(m_msg.c_str(), false, x + 15, y + 24, 16, r->a(m_msg_ok ? kGreen : kRed));
                     r->drawString("Changes apply at once. Server, featured server", false, x + 15, y + 50, 15,
                                   r->a(tsl::style::color::ColorDescription));
-                    r->drawString("and route are set in the BedrockLink app.", false, x + 15, y + 72, 15,
+                    r->drawString("and route are set in the BetterBedrock NX app.", false, x + 15, y + 72, 15,
                                   r->a(tsl::style::color::ColorDescription));
                 }), 90);
 
@@ -132,7 +132,7 @@ namespace {
                 s32 y = y0 + 24;
                 if (!m_st.config_ok) {
                     line(r, x, y, m_st.config_error, kRed, 16);
-                    line(r, x, y, "Set it up in the BedrockLink app.", desc);
+                    line(r, x, y, "Set it up in the BetterBedrock NX app.", desc);
                     return;
                 }
                 const route_config &c = m_st.cfg;
@@ -162,7 +162,7 @@ namespace {
             tsl::elm::ToggleListItem *m_toggle = nullptr;
     };
 
-    class BedrockLinkOverlay : public tsl::Overlay {
+    class BetterBedrockOverlay : public tsl::Overlay {
         public:
             /* libtesla has already initialized fs, hid, pl, pmdmnt, hid:sys and set:sys */
             void initServices() override {}
@@ -173,5 +173,5 @@ namespace {
 }
 
 int main(int argc, char **argv) {
-    return tsl::loop<BedrockLinkOverlay>(argc, argv);
+    return tsl::loop<BetterBedrockOverlay>(argc, argv);
 }

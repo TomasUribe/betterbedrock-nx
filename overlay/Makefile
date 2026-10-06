@@ -38,10 +38,10 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
 
-APP_TITLE			:=		BedrockLink
-APP_VERSION 	:= 		1.4.0
+APP_TITLE			:=		BetterBedrock NX
+APP_VERSION 	:= 		2.0.0
 
-TARGET		:=	bedrocklink
+TARGET		:=	betterbedrock-nx
 BUILD		:=	build
 SOURCES		:=	source ../common
 DATA		:=	data

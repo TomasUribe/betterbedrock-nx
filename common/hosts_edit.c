@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink - hosts file logic. See hosts_edit.h.
+// BetterBedrock NX - hosts file logic. See hosts_edit.h.
 #include "hosts_edit.h"
 
 #include <stdio.h>

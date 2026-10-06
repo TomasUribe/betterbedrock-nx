@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink - hosts file logic (no libnx, host-testable).
+// BetterBedrock NX - hosts file logic (no libnx, host-testable).
 //
 // Atmosphere's dns.mitm reads one hosts file per boot. Each active line is
 // "<ip> <pattern> [pattern...]"; '*' matches any run of characters, '%' stands
@@ -9,8 +9,8 @@
 // We only ever touch lines whose every pattern is a Microsoft/Xbox/Minecraft
 // host and none of which can match a Nintendo host. Those lines are disabled by
 // prefixing HE_MARK (which makes them comments) and restored by removing it.
-#ifndef BEDROCKLINK_HOSTS_EDIT_H
-#define BEDROCKLINK_HOSTS_EDIT_H
+#ifndef BBNX_HOSTS_EDIT_H
+#define BBNX_HOSTS_EDIT_H
 
 #include <stddef.h>
 
@@ -69,7 +69,9 @@ extern const char *const HE_ATMOSPHERE_DEFAULTS;
 
 // Server routing: one marked block at the end of the hosts file,
 //   HE_ROUTE_BEGIN / "<ip> <host>" / HE_ROUTE_END
-// owned by the BedrockLink overlay. Nothing outside it is ever changed.
+// owned by the app and its overlay. Nothing outside it is ever changed. The marker
+// lines and HE_MARK keep the 1.x name (BedrockLink) so existing blocks and fixes
+// are still found.
 #define HE_ROUTE_BEGIN "# --- BedrockLink route (managed by the BedrockLink overlay) ---"
 #define HE_ROUTE_END "# --- end of BedrockLink route ---"
 

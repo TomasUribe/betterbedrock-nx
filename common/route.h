@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink server routing: points one Minecraft featured server (Play > Servers)
+// BetterBedrock NX server routing: points one Minecraft featured server (Play > Servers)
 // at a server of your choice through one marked line in the hosts file Atmosphere
 // reads. Shared by the app and the overlay. Plain C + stdio, host-testable: all
 // paths start with "sdmc:/", which on a PC is a folder named "sdmc:".
@@ -8,13 +8,15 @@
 // address on the console itself. So the line points either at a BedrockConnect
 // server (its in-game menu then transfers you to any address and port) or, for a
 // server that runs on port 19132, straight at that server.
-#ifndef BEDROCKLINK_ROUTE_H
-#define BEDROCKLINK_ROUTE_H
+#ifndef BBNX_ROUTE_H
+#define BBNX_ROUTE_H
 
 #include <stddef.h>
 
-#define ROUTE_CONFIG_PATH           "sdmc:/config/bedrocklink/server.ini"
-#define ROUTE_BACKUP_DIR            "sdmc:/config/bedrocklink/backup"
+#define ROUTE_CONFIG_DIR            "sdmc:/config/betterbedrock-nx"
+#define ROUTE_CONFIG_PATH           ROUTE_CONFIG_DIR "/server.ini"
+#define ROUTE_BACKUP_DIR            ROUTE_CONFIG_DIR "/backup"
+#define ROUTE_LEGACY_CONFIG_PATH    "sdmc:/config/bedrocklink/server.ini"  // BedrockLink 1.x, copied once
 #define ROUTE_DNS_STARTUP_LOG       "sdmc:/atmosphere/logs/dns_mitm_startup.log"
 #define ROUTE_FEATURED_PORT         19132
 #define ROUTE_PUBLIC_BEDROCKCONNECT "104.238.130.180"  // BedrockConnect's public server

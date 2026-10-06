@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-or-later
-"""Pre-renders a font atlas for the PC preview of the BedrockLink GUI.
+"""Pre-renders a font atlas for the PC preview of the BetterBedrock NX GUI.
 
 The Switch build draws text with the console's system font (SDL2_ttf). The PC
 preview has no SDL2_ttf, so it draws from this atlas instead: Latin-1 glyphs at the

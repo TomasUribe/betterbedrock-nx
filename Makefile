@@ -12,16 +12,16 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output; see the libnx template for the other knobs.
 #---------------------------------------------------------------------------------
-TARGET		:=	BedrockLink
+TARGET		:=	BetterBedrockNX
 BUILD		:=	build
 SOURCES		:=	source common
 DATA		:=	data
 INCLUDES	:=	include common
 ROMFS		:=	romfs
 
-APP_TITLE   := BedrockLink
+APP_TITLE   := BetterBedrock NX
 APP_AUTHOR  := TomasUribe
-APP_VERSION := 1.4.0
+APP_VERSION := 2.0.0
 
 #---------------------------------------------------------------------------------
 # options for code generation

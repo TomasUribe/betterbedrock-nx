@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Console-side controls shared by the app and the overlay (libnx only).
-#ifndef BEDROCKLINK_NX_CONTROL_H
-#define BEDROCKLINK_NX_CONTROL_H
+#ifndef BBNX_NX_CONTROL_H
+#define BBNX_NX_CONTROL_H
 
 #include <stdint.h>
 

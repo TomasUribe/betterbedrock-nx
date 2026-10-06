@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Minimal libnx stand-in so the BedrockLink app runs on a PC against a fake "sdmc:" folder.
-// Buttons come from $BL_KEYS, one per frame: A B X Y + U(p) D(own) L(eft) R(ight); anything else = none.
+// Minimal libnx stand-in so the BetterBedrock NX app runs on a PC against a fake "sdmc:" folder.
+// Buttons come from $BL_KEYS, one per frame: A B X Y + U(p) D(own) L(eft) R(ight), l r (shoulder
+// buttons); anything else = none.
 // Keyboard entries come from $BL_KBD, separated by '|'.
 #pragma once
 #include <stdbool.h>
@@ -24,6 +25,10 @@ typedef struct { int type; } SwkbdConfig;
 #define HidNpadButton_X (1u << 2)
 #define HidNpadButton_Y (1u << 3)
 #define HidNpadButton_Plus (1u << 10)
+#define HidNpadButton_L (1u << 6)
+#define HidNpadButton_R (1u << 7)
+#define HidNpadButton_ZL (1u << 8)
+#define HidNpadButton_ZR (1u << 9)
 #define HidNpadButton_AnyLeft (1u << 12)
 #define HidNpadButton_AnyUp (1u << 13)
 #define HidNpadButton_AnyRight (1u << 14)
@@ -68,6 +73,8 @@ static inline u64 padGetButtonsDown(PadState *p) {
         case 'D': return HidNpadButton_AnyDown;
         case 'L': return HidNpadButton_AnyLeft;
         case 'R': return HidNpadButton_AnyRight;
+        case 'l': return HidNpadButton_L;
+        case 'r': return HidNpadButton_R;
         case '+': return HidNpadButton_Plus;
         default: return 0;
     }

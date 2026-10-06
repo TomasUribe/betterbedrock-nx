@@ -77,7 +77,7 @@ static void test_block_edits(void) {
 
 static void test_route_on_sd(const char *fixture) {
     system("rm -rf sdmc: && mkdir -p 'sdmc:/atmosphere/hosts' 'sdmc:/atmosphere/logs' "
-           "'sdmc:/config/bedrocklink' 'sdmc:/emuMMC'");
+           "'sdmc:/config/betterbedrock-nx' 'sdmc:/emuMMC'");
     char cmd[512];
     for (const char *n = "emummc\0sysmmc\0default\0"; *n; n += strlen(n) + 1) {
         snprintf(cmd, sizeof cmd, "cp '%s' 'sdmc:/atmosphere/hosts/%s.txt' && cp '%s' 'orig_%s.txt'",
@@ -185,7 +185,19 @@ static void test_save_config(void) {
     CHECK(!route_save_config(&c, msg, sizeof msg), "loopback BedrockConnect refused");
 }
 
+// BedrockLink 1.x kept server.ini in /config/bedrocklink: read once, copied over
+static void test_legacy_config(void) {
+    system("rm -rf sdmc: && mkdir -p 'sdmc:/config/bedrocklink'");
+    put(ROUTE_LEGACY_CONFIG_PATH, CONFIG);
+    route_config c;
+    CHECK(route_read_config(&c) == 1 && !strcmp(c.replaces, "play.galaxite.net"), "1.x settings read");
+    struct stat st;
+    CHECK(stat(ROUTE_CONFIG_PATH, &st) == 0 && stat(ROUTE_LEGACY_CONFIG_PATH, &st) == 0,
+          "copied to the new folder, the old file kept");
+}
+
 int main(int argc, char **argv) {
+    test_legacy_config();
     test_block_edits();
     test_fields();
     if (argc > 1) test_route_on_sd(argv[1]);

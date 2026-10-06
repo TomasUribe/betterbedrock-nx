@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// BedrockLink drawing layer: SDL2 shapes, text and the logo on a 1280x720 screen.
+// BetterBedrock NX drawing layer: SDL2 shapes, text and the logo on a 1280x720 screen.
 // On the Switch text comes from the system font (SDL2_ttf); the PC preview build
 // uses a pre-rendered font atlas instead (tests/pc_gui).
-#ifndef BEDROCKLINK_GFX_H
-#define BEDROCKLINK_GFX_H
+#ifndef BBNX_GFX_H
+#define BBNX_GFX_H
 
 #include <stdbool.h>
 
